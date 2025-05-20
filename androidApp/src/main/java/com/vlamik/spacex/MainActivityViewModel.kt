@@ -33,7 +33,7 @@ class MainActivityViewModel @Inject constructor(
     )
 
     sealed interface UiState {
-        object Loading : UiState
-        object Success : UiState
+        data object Loading : UiState
+        data object Success : UiState
     }
 }

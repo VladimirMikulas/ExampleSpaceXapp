@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     id(libs.plugins.android.application.get().pluginId)
     id(libs.plugins.kotlin.android.get().pluginId)
@@ -7,14 +5,6 @@ plugins {
     id(libs.plugins.hilt.android.get().pluginId)
     id("template.coroutines")
     alias(libs.plugins.compose.compiler)
-}
-fun getLocalProperty(key: String): String? {
-    val properties = Properties()
-    val localPropertiesFile = rootProject.file("local.properties")
-    if (localPropertiesFile.exists()) {
-        properties.load(localPropertiesFile.inputStream())
-    }
-    return properties.getProperty(key)
 }
 
 android {

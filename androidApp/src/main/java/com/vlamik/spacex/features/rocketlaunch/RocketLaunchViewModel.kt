@@ -10,7 +10,6 @@ import javax.inject.Inject
 @HiltViewModel
 class RocketLaunchViewModel @Inject constructor(
 ) : ViewModel() {
-    // State of the rocket launch
     private val _launchState = MutableStateFlow<LaunchRocketState>(LaunchRocketState.Ready)
     val launchState: StateFlow<LaunchRocketState> = _launchState.asStateFlow()
 

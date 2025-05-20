@@ -20,7 +20,6 @@ class App : Application() {
                 StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-//                    .penaltyDeath()
                     .build()
             )
             StrictMode.setVmPolicy(

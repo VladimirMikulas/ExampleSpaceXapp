@@ -1,5 +1,6 @@
 package com.vlamik.spacex.navigation
 
+import RocketsListScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -9,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import com.vlamik.spacex.features.crewlist.CrewListScreen
 import com.vlamik.spacex.features.rocketdetail.RocketDetailScreen
 import com.vlamik.spacex.features.rocketlaunch.RocketLaunchScreen
-import com.vlamik.spacex.features.rocketslist.RocketsListScreen
 
 
 @Composable

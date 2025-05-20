@@ -30,9 +30,9 @@ class RocketDetailViewModel @AssistedInject constructor(
     }
 
     sealed interface UiState {
-        object LoadingData : UiState
+        data object LoadingData : UiState
         data class Success(val rocket: RocketDetailModel) : UiState
-        object DataError : UiState
+        data object DataError : UiState
     }
 
     @AssistedFactory

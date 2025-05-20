@@ -2,6 +2,7 @@ package com.vlamik.spacex.features.rocketslist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vlamik.core.commons.PublishFlow
 import com.vlamik.core.domain.models.RocketListItemModel
 import com.vlamik.core.domain.usecase.ApplyRocketsFiltersUseCase
 import com.vlamik.core.domain.usecase.ApplyRocketsSearchUseCase
@@ -15,29 +16,27 @@ import com.vlamik.spacex.common.filtering.FilterState
 import com.vlamik.spacex.common.filtering.FilterValue
 import com.vlamik.spacex.common.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RocketsListViewModel @Inject constructor(
-    private val getRocketsListUseCase: GetRocketsListUseCase, // UseCase to get the original data
-    private val applyRocketsSearch: ApplyRocketsSearchUseCase, // UseCase to apply search logic
-    private val applyRocketsFilters: ApplyRocketsFiltersUseCase // UseCase to apply filter logic
+    private val getRocketsListUseCase: GetRocketsListUseCase,
+    private val applyRocketsSearch: ApplyRocketsSearchUseCase,
+    private val applyRocketsFilters: ApplyRocketsFiltersUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RocketsListContract.State())
     val uiState = _uiState.asStateFlow()
 
-    private val _effect = Channel<RocketsListContract.Effect>()
-    val effect = _effect.receiveAsFlow() // Using Channel for one-time events (e.g., navigation)
+    private val _effect = PublishFlow<RocketsListContract.Effect>() // Use your custom function
+    val effect: Flow<RocketsListContract.Effect> = _effect
 
     init {
-        // Initial load of rockets when the ViewModel is created
         processIntent(RocketsListContract.Intent.LoadRockets)
     }
 
@@ -57,15 +56,17 @@ class RocketsListViewModel @Inject constructor(
                     intent.isSelected
                 )
 
-                is RocketsListContract.Intent.RocketClicked -> _effect.send(
+                is RocketsListContract.Intent.RocketClicked -> _effect.tryEmit(
                     RocketsListContract.Effect.OpenRocketDetails(intent.rocketId)
                 )
 
-                is RocketsListContract.Intent.NavigateTo -> _effect.send(
+                is RocketsListContract.Intent.NavigateTo -> _effect.tryEmit(
                     RocketsListContract.Effect.NavigateToRoute(intent.route)
                 )
 
-                is RocketsListContract.Intent.DrawerMenuClicked -> _effect.send(RocketsListContract.Effect.OpenDrawer)
+                is RocketsListContract.Intent.DrawerMenuClicked -> _effect.tryEmit(
+                    RocketsListContract.Effect.OpenDrawer
+                )
                 is RocketsListContract.Intent.RetryLoadRockets -> loadRockets(refresh = false)
                 is RocketsListContract.Intent.ConsumeError -> _uiState.update { it.copy(error = null) }
             }

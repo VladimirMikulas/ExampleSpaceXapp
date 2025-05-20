@@ -1,5 +1,3 @@
-package com.vlamik.spacex.features.rocketslist
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,10 +51,23 @@ import com.vlamik.spacex.common.utils.preview.ThemeModePreview
 import com.vlamik.spacex.component.LoadingIndicator
 import com.vlamik.spacex.component.appbars.SearchAppBar
 import com.vlamik.spacex.component.drawer.AppDrawer
+import com.vlamik.spacex.features.rocketslist.RocketsListContract
+import com.vlamik.spacex.features.rocketslist.RocketsListViewModel
 import com.vlamik.spacex.navigation.NavRoutes
 import com.vlamik.spacex.theme.SoftGray
 import com.vlamik.spacex.theme.TemplateTheme
 import kotlinx.coroutines.launch
+
+
+/**
+ * Main screen for displaying the list of rockets.
+ * This Composable observes the ViewModel's UI state and reacts to side effects.
+ *
+ * @param viewModel The [RocketsListViewModel] providing UI state and handling user intents.
+ * @param openDetailsClicked Lambda to navigate to rocket details, taking the rocket ID.
+ * @param navigateTo Lambda to navigate to a different route using [NavRoutes].
+ * @param currentRoute The currently active navigation route, used for drawer selection.
+ */
 
 @Composable
 fun RocketsListScreen(
@@ -69,22 +80,25 @@ fun RocketsListScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Handling side effects
+    // A side-effect handler that launches a coroutine once and collects effects from the ViewModel.
+    // It reacts to navigation, details opening, and drawer opening requests from the ViewModel.
     LaunchedEffect(key1 = viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is RocketsListContract.Effect.OpenRocketDetails -> openDetailsClicked(effect.rocketId)
                 is RocketsListContract.Effect.NavigateToRoute -> navigateTo(effect.route)
                 is RocketsListContract.Effect.OpenDrawer -> {
-                    scope.launch { drawerState.open() }
+                    scope.launch { drawerState.open() } // Opens the navigation drawer
                 }
             }
         }
     }
 
+    // The main app drawer component that wraps the content.
     AppDrawer(
         currentRoute = currentRoute,
         onItemSelected = { route ->
+            // Sends a navigation intent to the ViewModel when a drawer item is selected.
             viewModel.processIntent(
                 RocketsListContract.Intent.NavigateTo(
                     route
@@ -93,26 +107,34 @@ fun RocketsListScreen(
         },
         drawerState = drawerState
     ) {
+        // The core content of the Rockets List screen.
         RocketsListContent(
             state = state,
-            onIntent = viewModel::processIntent
+            onIntent = viewModel::processIntent // Passes the ViewModel's intent processing function
         )
     }
 }
+
+/**
+ * Displays the main content area of the Rockets List screen, including the search bar and the list itself.
+ * It's responsible for showing loading, error, empty, or data states.
+ *
+ * @param state The current UI state from the ViewModel.
+ * @param onIntent Callback to send user intents to the ViewModel.
+ */
 
 @Composable
 private fun RocketsListContent(
     state: RocketsListContract.State,
     onIntent: (RocketsListContract.Intent) -> Unit
 ) {
-
     Scaffold(
         topBar = {
             SearchAppBar(
-                title = stringResource(R.string.rockets),
-                searchText = state.searchQuery,
-                activeFilters = state.activeFilters,
-                filters = state.availableFilters,
+                title = stringResource(R.string.rockets), // Title of the app bar
+                searchText = state.searchQuery, // Current search query
+                activeFilters = state.activeFilters, // Currently applied filters
+                filters = state.availableFilters, // All available filters
                 onSearchTextChange = { query ->
                     onIntent(
                         RocketsListContract.Intent.SearchQueryChanged(
@@ -153,7 +175,7 @@ private fun RocketsListContent(
 
                     else -> {
                         RocketDataContent(
-                            rockets = state.filteredRockets,
+                            rockets = state.filteredRockets, // Display filtered rockets
                             onDetailsClicked = { rocketId ->
                                 onIntent(RocketsListContract.Intent.RocketClicked(rocketId))
                             }
@@ -165,6 +187,12 @@ private fun RocketsListContent(
     }
 }
 
+/**
+ * Composable to display an error message and a retry button.
+ *
+ * @param errorMessage The [UiText] object representing the error message.
+ * @param onRetry Callback to be invoked when the retry button is clicked.
+ */
 @Composable
 private fun ErrorState(errorMessage: UiText, onRetry: () -> Unit) {
     Column(
@@ -186,6 +214,12 @@ private fun ErrorState(errorMessage: UiText, onRetry: () -> Unit) {
     }
 }
 
+/**
+ * Displays either a list of rockets or an empty state message.
+ *
+ * @param rockets The list of [RocketListItemModel] to display.
+ * @param onDetailsClicked Callback invoked when a rocket item is clicked, passing its ID.
+ */
 @Composable
 private fun RocketDataContent(
     rockets: List<RocketListItemModel>,
@@ -212,7 +246,7 @@ private fun RocketDataContent(
                     )
                     if (index < rockets.lastIndex) {
                         HorizontalDivider(
-                            color = MaterialTheme.colorScheme.background, // Or another suitable divider color
+                            color = MaterialTheme.colorScheme.background,
                             thickness = 2.dp,
                             modifier = Modifier.padding(start = 16.dp)
                         )
@@ -223,6 +257,9 @@ private fun RocketDataContent(
     }
 }
 
+/**
+ * Composable to display a message when no rockets are found (e.g., after filtering/searching).
+ */
 @Composable
 private fun EmptyState() {
     Column(
@@ -247,6 +284,12 @@ private fun EmptyState() {
     }
 }
 
+/**
+ * Represents a single item in the rockets list.
+ *
+ * @param rocket The [RocketListItemModel] containing data for the rocket.
+ * @param onDetailsClicked Callback invoked when the item is clicked, passing the rocket's ID.
+ */
 @Composable
 private fun RocketsListItem(
     rocket: RocketListItemModel,
@@ -265,10 +308,11 @@ private fun RocketsListItem(
             modifier = Modifier
                 .size(40.dp)
                 .padding(end = 16.dp),
-            tint = Color.Unspecified // If the icon has its own colors, otherwise consider MaterialTheme.colorScheme.primary
+            tint = Color.Unspecified
         )
         RocketInfo(
-            rocket = rocket, modifier = Modifier
+            rocket = rocket,
+            modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         )
@@ -284,6 +328,12 @@ private fun RocketsListItem(
     }
 }
 
+/**
+ * Displays the name and first flight date of a rocket.
+ *
+ * @param rocket The [RocketListItemModel] containing rocket information.
+ * @param modifier Modifier for layout and styling.
+ */
 @Composable
 private fun RocketInfo(rocket: RocketListItemModel, modifier: Modifier) {
     Column(
@@ -304,8 +354,6 @@ private fun RocketInfo(rocket: RocketListItemModel, modifier: Modifier) {
     }
 }
 
-
-// --- Preview Data ---
 val previewRockets = listOf(
     RocketListItemModel(
         id = "1", name = "Falcon 9", firstFlight = "2010-06-04",
@@ -349,8 +397,6 @@ val previewAvailableFilters = listOf(
     )
 )
 
-// --- Preview Composable Functions ---
-
 @ThemeModePreview
 @FontScalePreview
 @DeviceFormatPreview
@@ -362,7 +408,7 @@ private fun RocketsListScreenPreview_DataLoaded() {
                 isLoading = false,
                 rockets = previewRockets,
                 filteredRockets = previewRockets.take(2),
-                availableFilters = previewAvailableFilters, // Use updated preview data
+                availableFilters = previewAvailableFilters,
                 searchQuery = "",
                 activeFilters = FilterState(
                     selectedFilters = mapOf(

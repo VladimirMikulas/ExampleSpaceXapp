@@ -139,7 +139,7 @@ private fun rememberSensorPitchState(context: Context): State<Float> {
             sensorManager.registerListener(
                 sensorEventListener,
                 accelerometerSensor,
-                SensorManager.SENSOR_DELAY_UI // Or another appropriate rate (e.g., SENSOR_DELAY_NORMAL)
+                SensorManager.SENSOR_DELAY_UI
             )
         }
 
