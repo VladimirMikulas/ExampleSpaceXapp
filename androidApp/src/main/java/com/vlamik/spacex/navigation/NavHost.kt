@@ -49,7 +49,7 @@ fun SpaceXNavHost(
                     onLaunchClicked = { rocketName ->
                         navController.navigate(NavRoutes.RocketLaunch.build(rocketName))
                     }) {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
         }
@@ -59,7 +59,7 @@ fun SpaceXNavHost(
                     rocketName = it,
                     rocketLaunchViewModel = hiltViewModel()
                 ) {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
         }

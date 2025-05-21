@@ -33,7 +33,7 @@ class RocketsListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RocketsListContract.State())
     val uiState = _uiState.asStateFlow()
 
-    private val _effect = PublishFlow<RocketsListContract.Effect>() // Use your custom function
+    private val _effect = PublishFlow<RocketsListContract.Effect>()
     val effect: Flow<RocketsListContract.Effect> = _effect
 
     init {

@@ -82,13 +82,13 @@ fun RocketsListScreen(
 
     // A side-effect handler that launches a coroutine once and collects effects from the ViewModel.
     // It reacts to navigation, details opening, and drawer opening requests from the ViewModel.
-    LaunchedEffect(key1 = viewModel.effect) {
+    LaunchedEffect(key1 = Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is RocketsListContract.Effect.OpenRocketDetails -> openDetailsClicked(effect.rocketId)
                 is RocketsListContract.Effect.NavigateToRoute -> navigateTo(effect.route)
                 is RocketsListContract.Effect.OpenDrawer -> {
-                    scope.launch { drawerState.open() } // Opens the navigation drawer
+                    scope.launch { drawerState.open() }
                 }
             }
         }
@@ -98,7 +98,6 @@ fun RocketsListScreen(
     AppDrawer(
         currentRoute = currentRoute,
         onItemSelected = { route ->
-            // Sends a navigation intent to the ViewModel when a drawer item is selected.
             viewModel.processIntent(
                 RocketsListContract.Intent.NavigateTo(
                     route
@@ -107,10 +106,9 @@ fun RocketsListScreen(
         },
         drawerState = drawerState
     ) {
-        // The core content of the Rockets List screen.
         RocketsListContent(
             state = state,
-            onIntent = viewModel::processIntent // Passes the ViewModel's intent processing function
+            onIntent = viewModel::processIntent
         )
     }
 }
@@ -175,7 +173,7 @@ private fun RocketsListContent(
 
                     else -> {
                         RocketDataContent(
-                            rockets = state.filteredRockets, // Display filtered rockets
+                            rockets = state.filteredRockets,
                             onDetailsClicked = { rocketId ->
                                 onIntent(RocketsListContract.Intent.RocketClicked(rocketId))
                             }
