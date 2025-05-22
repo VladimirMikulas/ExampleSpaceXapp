@@ -1,6 +1,7 @@
 package com.vlamik.spacex.common.filtering
 
-import com.vlamik.spacex.common.utils.UiText
+import com.vlamik.core.commons.AppText
+import com.vlamik.core.domain.usecase.filtering.FilterValue
 
 /**
  * Data class representing one type of filter (e.g., "Height", "First Flight").
@@ -11,7 +12,7 @@ import com.vlamik.spacex.common.utils.UiText
  */
 data class FilterItem(
     val key: String,
-    val displayName: UiText,
+    val displayName: AppText,
     val values: List<FilterValue>,
-    val extraParams: Map<String, UiText> = emptyMap()
+    val extraParams: Map<String, AppText> = emptyMap()
 )

@@ -45,11 +45,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vlamik.core.domain.usecase.filtering.FilterValue
 import com.vlamik.spacex.R
 import com.vlamik.spacex.common.filtering.FilterItem
 import com.vlamik.spacex.common.filtering.FilterState
-import com.vlamik.spacex.common.filtering.FilterValue
-import com.vlamik.spacex.common.utils.asString
+import com.vlamik.spacex.component.asString
 
 /**
  * A dynamic app bar that switches between a normal display mode and an interactive search mode

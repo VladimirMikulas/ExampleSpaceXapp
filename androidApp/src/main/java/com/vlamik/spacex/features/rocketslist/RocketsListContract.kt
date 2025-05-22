@@ -1,10 +1,10 @@
 package com.vlamik.spacex.features.rocketslist
 
+import com.vlamik.core.commons.AppText
 import com.vlamik.core.domain.models.RocketListItemModel
+import com.vlamik.core.domain.usecase.filtering.FilterValue
 import com.vlamik.spacex.common.filtering.FilterItem
 import com.vlamik.spacex.common.filtering.FilterState
-import com.vlamik.spacex.common.filtering.FilterValue
-import com.vlamik.spacex.common.utils.UiText
 import com.vlamik.spacex.navigation.NavRoutes
 
 // This file defines the contract between the UI (View/Composable) and the ViewModel.
@@ -23,7 +23,7 @@ interface RocketsListContract {
         val searchQuery: String = "",
         val activeFilters: FilterState = FilterState(), // Current active filters
         val availableFilters: List<FilterItem> = emptyList(), // Filter options for the UI
-        val error: UiText? = null
+        val error: AppText? = null
     )
 
     sealed interface Intent {

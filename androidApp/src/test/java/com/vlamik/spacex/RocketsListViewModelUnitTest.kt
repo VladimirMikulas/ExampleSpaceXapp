@@ -10,7 +10,7 @@ import com.vlamik.core.domain.usecase.ApplyRocketsFiltersUseCase
 import com.vlamik.core.domain.usecase.ApplyRocketsSearchUseCase
 import com.vlamik.core.domain.usecase.GetRocketsListUseCase
 import com.vlamik.core.domain.usecase.filtering.FilterConstants
-import com.vlamik.spacex.common.filtering.FilterValue
+import com.vlamik.core.domain.usecase.filtering.FilterValue
 import com.vlamik.spacex.features.rocketslist.RocketsListContract
 import com.vlamik.spacex.features.rocketslist.RocketsListViewModel
 import io.mockk.coEvery

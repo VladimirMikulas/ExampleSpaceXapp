@@ -38,18 +38,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.vlamik.core.commons.AppText
 import com.vlamik.core.domain.models.RocketListItemModel
+import com.vlamik.core.domain.usecase.filtering.FilterValue
 import com.vlamik.spacex.R
 import com.vlamik.spacex.common.filtering.FilterItem
 import com.vlamik.spacex.common.filtering.FilterState
-import com.vlamik.spacex.common.filtering.FilterValue
-import com.vlamik.spacex.common.utils.UiText
-import com.vlamik.spacex.common.utils.asString
 import com.vlamik.spacex.common.utils.preview.DeviceFormatPreview
 import com.vlamik.spacex.common.utils.preview.FontScalePreview
 import com.vlamik.spacex.common.utils.preview.ThemeModePreview
 import com.vlamik.spacex.component.LoadingIndicator
 import com.vlamik.spacex.component.appbars.SearchAppBar
+import com.vlamik.spacex.component.asString
 import com.vlamik.spacex.component.drawer.AppDrawer
 import com.vlamik.spacex.features.rocketslist.RocketsListContract
 import com.vlamik.spacex.features.rocketslist.RocketsListViewModel
@@ -188,11 +188,11 @@ private fun RocketsListContent(
 /**
  * Composable to display an error message and a retry button.
  *
- * @param errorMessage The [UiText] object representing the error message.
+ * @param errorMessage The [AppText] object representing the error message.
  * @param onRetry Callback to be invoked when the retry button is clicked.
  */
 @Composable
-private fun ErrorState(errorMessage: UiText, onRetry: () -> Unit) {
+private fun ErrorState(errorMessage: AppText, onRetry: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -370,27 +370,27 @@ val previewRockets = listOf(
 val previewAvailableFilters = listOf(
     FilterItem(
         key = "name",
-        displayName = UiText.from(R.string.filter_name),
+        displayName = AppText.from(R.string.filter_name),
         values = listOf(
-            FilterValue.ExactMatch(displayName = UiText.dynamic("Falcon 9"), value = "Falcon 9"),
+            FilterValue.ExactMatch(displayName = AppText.dynamic("Falcon 9"), value = "Falcon 9"),
             FilterValue.ExactMatch(
-                displayName = UiText.dynamic("Falcon Heavy"),
+                displayName = AppText.dynamic("Falcon Heavy"),
                 value = "Falcon Heavy"
             ),
-            FilterValue.ExactMatch(displayName = UiText.dynamic("Starship"), value = "Starship")
+            FilterValue.ExactMatch(displayName = AppText.dynamic("Starship"), value = "Starship")
         )
     ),
     FilterItem(
         key = "first_flight",
-        displayName = UiText.from(R.string.filter_first_flight),
+        displayName = AppText.from(R.string.filter_first_flight),
         values = listOf(
-            FilterValue.YearRange(displayName = UiText.dynamic("Before 2015"), endYear = 2015),
+            FilterValue.YearRange(displayName = AppText.dynamic("Before 2015"), endYear = 2015),
             FilterValue.YearRange(
-                displayName = UiText.dynamic("2015-2020"),
+                displayName = AppText.dynamic("2015-2020"),
                 startYear = 2015,
                 endYear = 2020
             ),
-            FilterValue.YearRange(displayName = UiText.dynamic("After 2020"), startYear = 2020)
+            FilterValue.YearRange(displayName = AppText.dynamic("After 2020"), startYear = 2020)
         )
     )
 )
@@ -412,7 +412,7 @@ private fun RocketsListScreenPreview_DataLoaded() {
                     selectedFilters = mapOf(
                         "name" to setOf(
                             FilterValue.ExactMatch(
-                                displayName = UiText.dynamic("Falcon 9"),
+                                displayName = AppText.dynamic("Falcon 9"),
                                 value = "Falcon 9"
                             )
                         )
@@ -446,7 +446,7 @@ private fun RocketsListScreenPreview_Error() {
         RocketsListContent(
             state = RocketsListContract.State(
                 isLoading = false,
-                error = UiText.from(R.string.data_error)
+                error = AppText.from(R.string.data_error)
             ),
             onIntent = {}
         )
