@@ -1,3 +1,5 @@
+package com.vlamik.spacex.features.rocketslist
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,8 +53,6 @@ import com.vlamik.spacex.component.LoadingIndicator
 import com.vlamik.spacex.component.appbars.SearchAppBar
 import com.vlamik.spacex.component.asString
 import com.vlamik.spacex.component.drawer.AppDrawer
-import com.vlamik.spacex.features.rocketslist.RocketsListContract
-import com.vlamik.spacex.features.rocketslist.RocketsListViewModel
 import com.vlamik.spacex.navigation.NavRoutes
 import com.vlamik.spacex.theme.SoftGray
 import com.vlamik.spacex.theme.TemplateTheme
