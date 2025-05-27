@@ -6,7 +6,7 @@ import com.vlamik.core.commons.AppText.DynamicString
 import com.vlamik.core.commons.AppText.StringResource
 
 /**
- * Resolves the UiText to an actual String using the provided Context.
+ * Resolves the AppText to an actual String using the provided Context.
  * @param context The Context needed to access String resources.
  * @return The resolved String.
  */

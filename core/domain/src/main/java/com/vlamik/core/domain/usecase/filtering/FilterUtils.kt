@@ -5,7 +5,6 @@ import com.vlamik.core.domain.models.datePattern
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 
-// These classes store the numerical boundaries of the ranges, not their string representations.
 data class DoubleRangeInfo(val min: Double, val max: Double, val step: Double)
 data class IntRangeInfo(val min: Int, val max: Int, val step: Int)
 
@@ -15,7 +14,6 @@ object FilterUtils {
     /**
      * Generates information about numerical ranges based on a list of values.
      * Returns DoubleRangeInfo containing min, max, and step for dividing into 3 ranges.
-     * No longer uses Context and does not return strings.
      */
     fun generateDoubleRangeInfo(values: List<Double>): DoubleRangeInfo? {
         if (values.isEmpty()) return null
@@ -32,7 +30,6 @@ object FilterUtils {
     /**
      * Generates information about year ranges based on a list of date strings.
      * Returns IntRangeInfo containing min, max year, and step for dividing into 3 ranges.
-     * No longer uses Context and does not return strings.
      */
     fun generateYearRangeInfo(dates: List<String>): IntRangeInfo? {
         val years = dates.mapNotNull { extractYear(it) }
@@ -49,7 +46,6 @@ object FilterUtils {
 
     /**
      * Extracts the year from a date string.
-     * Remains the same as it does not depend on Context.
      */
     fun extractYear(date: String): Int? {
         return try {

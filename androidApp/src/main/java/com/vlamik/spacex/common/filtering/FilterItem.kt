@@ -6,9 +6,9 @@ import com.vlamik.core.domain.usecase.filtering.FilterValue
 /**
  * Data class representing one type of filter (e.g., "Height", "First Flight").
  * @param key Unique filter key (used in FilterConstants).
- * @param displayName UiText for displaying the filter name to the user.
+ * @param displayName AppText for displaying the filter name to the user.
  * @param values List of available values for this filter, represented by the FilterValue class.
- * @param extraParams Additional parameters, e.g., units, represented as Map<String, UiText>.
+ * @param extraParams Additional parameters, e.g., units, represented as Map<String, AppText>.
  */
 data class FilterItem(
     val key: String,

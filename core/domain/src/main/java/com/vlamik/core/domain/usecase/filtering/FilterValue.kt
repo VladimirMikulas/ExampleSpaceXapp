@@ -9,7 +9,7 @@ import com.vlamik.core.commons.AppText
 sealed class FilterValue(open val displayName: AppText) {
     /**
      * Represents an exact match value (e.g., rocket name).
-     * @param displayName UiText for displaying the value to the user.
+     * @param displayName AppText for displaying the value to the user.
      * @param value The actual String value for filtering.
      */
     data class ExactMatch(override val displayName: AppText, val value: String) :
@@ -17,7 +17,7 @@ sealed class FilterValue(open val displayName: AppText) {
 
     /**
      * Represents a numerical range (e.g., height, diameter, mass).
-     * @param displayName UiText for displaying the range to the user.
+     * @param displayName AppText for displaying the range to the user.
      * @param start The lower bound of the range (inclusive), null if it's an "under" range.
      * @param end The upper bound of the range (inclusive), null if it's an "over" range.
      */
@@ -29,7 +29,7 @@ sealed class FilterValue(open val displayName: AppText) {
 
     /**
      * Represents a range of years (e.g., first flight date).
-     * @param displayName UiText for displaying the year range to the user.
+     * @param displayName AppText for displaying the year range to the user.
      * @param startYear The lower bound of the year range (inclusive), null if it's a "before" range.
      * @param endYear The upper bound of the year range (inclusive), null if it's an "after" range.
      */

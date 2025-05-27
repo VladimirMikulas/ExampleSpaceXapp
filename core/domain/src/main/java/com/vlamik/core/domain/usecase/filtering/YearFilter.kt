@@ -1,7 +1,7 @@
 package com.vlamik.core.domain.usecase.filtering
 
 /**
- * Object containing logic to check if a year matches a domain year range filter.
+ * Object containing logic to check if a year matches a year range filter.
  */
 object YearFilter {
     /**
