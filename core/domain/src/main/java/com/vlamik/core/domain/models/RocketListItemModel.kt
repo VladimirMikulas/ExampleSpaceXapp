@@ -1,11 +1,11 @@
 package com.vlamik.core.domain.models
 
-import com.vlamik.core.data.models.RocketDto
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import kotlinx.serialization.Serializable
+
 
 const val datePattern = "dd.MM.yyyy"
 
+@Serializable
 data class RocketListItemModel(
     val id: String,
     val name: String,
@@ -14,17 +14,3 @@ data class RocketListItemModel(
     val diameter: Double,
     val mass: Int,
 )
-
-fun RocketDto.toRocketListItemModel(): RocketListItemModel = RocketListItemModel(
-    id = id.orEmpty(),
-    name = name.orEmpty(),
-    firstFlight = getFirstFlightDateFormat(firstFlight.orEmpty()),
-    height = height?.meters ?: -1.0,
-    diameter = diameter?.meters ?: -1.0,
-    mass = mass?.kg?.toInt() ?: -1
-)
-
-fun getFirstFlightDateFormat(date: String): String {
-    val formatter = DateTimeFormatter.ofPattern(datePattern)
-    return LocalDate.parse(date).format(formatter)
-}

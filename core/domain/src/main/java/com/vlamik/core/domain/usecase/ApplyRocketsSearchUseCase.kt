@@ -2,14 +2,13 @@ package com.vlamik.core.domain.usecase
 
 
 import com.vlamik.core.domain.models.RocketListItemModel
-import javax.inject.Inject
 
 /**
  * UseCase to apply a text search query to a list of rockets.
  * This logic is extracted from the ViewModel/combined filter UseCase
  * to adhere to the Single Responsibility Principle.
  */
-class ApplyRocketsSearchUseCase @Inject constructor() {
+class ApplyRocketsSearchUseCase {
 
     /**
      * Filters a list of rockets based on a search query string.

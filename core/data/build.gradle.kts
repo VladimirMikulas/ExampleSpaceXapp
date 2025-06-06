@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     implementation(project(":core:commons"))
+    implementation(project(":core:domain"))
     api(libs.bundles.network)
     implementation(libs.datastore)
 

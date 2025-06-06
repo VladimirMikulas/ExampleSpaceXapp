@@ -1,13 +1,11 @@
 package com.vlamik.core.domain.usecase
 
-import com.vlamik.core.data.repositories.AppRepository
+import com.vlamik.core.domain.repository.AppRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class AppSettingsUseCase @Inject constructor(
+class AppSettingsUseCase(
     private val appRepository: AppRepository,
 ) {
-
     fun hasBeenOpened(): Flow<Boolean> {
         return appRepository.hasBeenOpened()
     }

@@ -1,4 +1,4 @@
-package com.vlamik.core.data.repositories
+package com.vlamik.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 

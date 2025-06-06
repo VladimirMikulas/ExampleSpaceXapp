@@ -1,11 +1,7 @@
 package com.vlamik.spacex
 
-import com.vlamik.core.data.models.Dimensions
-import com.vlamik.core.data.models.FirstStage
-import com.vlamik.core.data.models.Mass
-import com.vlamik.core.data.models.RocketDto
-import com.vlamik.core.data.models.SecondStage
-import com.vlamik.core.data.repositories.RocketsRepository
+import com.vlamik.core.domain.models.RocketListItemModel
+import com.vlamik.core.domain.repository.RocketsRepository
 import com.vlamik.core.domain.usecase.ApplyRocketsFiltersUseCase
 import com.vlamik.core.domain.usecase.ApplyRocketsSearchUseCase
 import com.vlamik.core.domain.usecase.GetRocketsListUseCase
@@ -44,7 +40,8 @@ class RocketsListViewModelUnitTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        coEvery { mockRocketsRepository.getRockets(any()) } returns Result.success(emptyList())
+        // Mock repository for initial state
+        coEvery { mockRocketsRepository.getRocketsList(any()) } returns Result.success(emptyList())
 
         viewModel = RocketsListViewModel(
             getRocketsListUseCase,
@@ -61,12 +58,11 @@ class RocketsListViewModelUnitTest {
     @Test
     fun `data loads successfully and updates state`() = runTest {
         // Arrange
-        val testRocketsDto = listOf(createTestRocketDto(name = "TestRocket1"))
-        coEvery { mockRocketsRepository.getRockets(any()) } returns Result.success(testRocketsDto)
+        // Now we return RocketListItemModel, not RocketDto
+        val testRockets = listOf(createTestRocketListItemModel(name = "TestRocket1"))
+        coEvery { mockRocketsRepository.getRocketsList(any()) } returns Result.success(testRockets)
 
         // Act: Explicitly process the LoadRockets intent.
-        // Even if it's called in init, explicitly doing it here makes the test clearer
-        // about when the action happens.
         viewModel.processIntent(RocketsListContract.Intent.LoadRockets)
 
         // Allow all pending coroutines to complete, including the data fetching and StateFlow update.
@@ -84,7 +80,7 @@ class RocketsListViewModelUnitTest {
     fun `error during load sets error state`() = runTest {
         // Arrange
         val errorMessage = "Failed to load data!"
-        coEvery { mockRocketsRepository.getRockets(any()) } returns Result.failure(
+        coEvery { mockRocketsRepository.getRocketsList(any()) } returns Result.failure(
             RuntimeException(
                 errorMessage
             )
@@ -102,11 +98,12 @@ class RocketsListViewModelUnitTest {
     @Test
     fun `search query filters rockets by name`() = runTest {
         // Arrange
+        // Using createTestRocketListItemModel
         val rockets = listOf(
-            createTestRocketDto(name = "Falcon 9"),
-            createTestRocketDto(name = "Starship")
+            createTestRocketListItemModel(name = "Falcon 9"),
+            createTestRocketListItemModel(name = "Starship")
         )
-        coEvery { mockRocketsRepository.getRockets(any()) } returns Result.success(rockets)
+        coEvery { mockRocketsRepository.getRocketsList(any()) } returns Result.success(rockets)
         viewModel.processIntent(RocketsListContract.Intent.LoadRockets)
         advanceUntilIdle() // Ensure rockets are loaded first
 
@@ -125,22 +122,23 @@ class RocketsListViewModelUnitTest {
     fun `filter chip toggles correctly`() = runTest {
         // Arrange
         val rockets = listOf(
-            createTestRocketDto(name = "Old Rocket", firstFlight = "2000-01-01"),
-            createTestRocketDto(name = "New Rocket", firstFlight = "2020-01-01")
+            // Important: firstFlight must be in "dd.MM.yyyy" format for RocketListItemModel
+            createTestRocketListItemModel(name = "Old Rocket", firstFlight = "01.01.2000"),
+            createTestRocketListItemModel(name = "New Rocket", firstFlight = "01.01.2020")
         )
-        coEvery { mockRocketsRepository.getRockets(any()) } returns Result.success(rockets)
+        coEvery { mockRocketsRepository.getRocketsList(any()) } returns Result.success(rockets)
         viewModel.processIntent(RocketsListContract.Intent.LoadRockets)
         advanceUntilIdle() // Ensure rockets and filters are loaded
 
         assertEquals(2, viewModel.uiState.first().filteredRockets.size) // All rockets initially
 
-        // Find a "First Flight" filter that would typically filter older rockets
+        // Find the "First Flight" filter
         val firstFlightFilters = viewModel.uiState.first().availableFilters
             .first { it.key == FilterConstants.KEY_FIRST_FLIGHT }.values
-        // Find a filter that would select the "Old Rocket" (e.g., 'before a certain year')
+        // Find a filter that would select "Old Rocket" (e.g., 'before a certain year')
+        // We need to use the getFirstFlightDateFormat function for consistent date format
         val oldRocketFilter = firstFlightFilters.filterIsInstance<FilterValue.YearRange>()
-            .first { it.endYear != null && it.startYear == null } // Get the 'before' filter type
-
+            .first { it.startYear == null && it.endYear != null } // This finds the "Before {Year}" filter type
 
         // Act 1: Select the filter
         viewModel.processIntent(
@@ -172,61 +170,28 @@ class RocketsListViewModelUnitTest {
         )
         advanceUntilIdle()
 
-        // Assert 2: Both rockets are back
+        // Assert 2: Both rocket models are back
         val stateAfterDeselect = viewModel.uiState.first()
         assertEquals(2, stateAfterDeselect.filteredRockets.size)
         assertTrue(stateAfterDeselect.activeFilters.selectedFilters[FilterConstants.KEY_FIRST_FLIGHT]?.isEmpty() == true)
     }
 
-    private fun createTestRocketDto(
+    private fun createTestRocketListItemModel(
         id: String = "rocket_id",
         name: String = "Test Rocket",
-        firstFlight: String = "2006-03-24", // Default date for generic tests
+        // Important: firstFlight must be in "dd.MM.yyyy" format for RocketListItemModel
+        firstFlight: String = "24.03.2006",
         height: Double = 33.5,
         diameter: Double = 3.66,
-        mass: Int = 301460,
-        stages: Int = 2,
-        boosters: Int = 0,
-        costPerLaunch: Int = 6700000,
-        successRatePct: Int = 97,
-        wikipedia: String = "[https://en.wikipedia.org/wiki/Test_Rocket](https://en.wikipedia.org/wiki/Test_Rocket)",
-        description: String = "A test rocket for unit tests.",
-        flickrImages: List<String> = listOf("image_url_1", "image_url_2"),
-        active: Boolean = true,
-        country: String = "USA",
-        company: String = "SpaceX",
-        firstStage: FirstStage = FirstStage(
-            reusable = true,
-            engines = 9,
-            fuelAmountTons = 385.0,
-            burnTimeSEC = 162
-        ),
-        secondStage: SecondStage = SecondStage(
-            engines = 1,
-            fuelAmountTons = 90.0,
-            burnTimeSEC = 397,
-            reusable = false
-        )
-    ): RocketDto {
-        return RocketDto(
+        mass: Int = 301460
+    ): RocketListItemModel {
+        return RocketListItemModel(
             id = id,
             name = name,
             firstFlight = firstFlight,
-            height = Dimensions(meters = height, feet = height * 3.28084),
-            diameter = Dimensions(meters = diameter, feet = diameter * 3.28084),
-            mass = Mass(kg = mass.toDouble(), lb = mass * 2.20462),
-            stages = stages.toLong(),
-            boosters = boosters.toLong(),
-            costPerLaunch = costPerLaunch.toLong(),
-            successRatePct = successRatePct.toLong(),
-            wikipedia = wikipedia,
-            description = description,
-            flickrImages = flickrImages,
-            active = active,
-            country = country,
-            company = company,
-            firstStage = firstStage,
-            secondStage = secondStage
+            height = height,
+            diameter = diameter,
+            mass = mass
         )
     }
 }

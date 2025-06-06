@@ -5,13 +5,12 @@ import com.vlamik.core.domain.usecase.filtering.FilterConstants
 import com.vlamik.core.domain.usecase.filtering.FilterValue
 import com.vlamik.core.domain.usecase.filtering.RangeFilter
 import com.vlamik.core.domain.usecase.filtering.YearFilter
-import javax.inject.Inject
 
 /**
  * UseCase to apply active filters to a list of rockets.
  * This logic operates purely on domain models.
  */
-class ApplyRocketsFiltersUseCase @Inject constructor() {
+class ApplyRocketsFiltersUseCase {
     /**
      * Filters a list of rockets based on the selected filter values.
      *

@@ -1,7 +1,13 @@
 package com.vlamik.core.data.models
 
+import com.vlamik.core.domain.models.RocketDetailModel
+import com.vlamik.core.domain.models.RocketListItemModel
+import com.vlamik.core.domain.models.StageDetailModel
+import com.vlamik.core.domain.models.datePattern
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 @Serializable
@@ -162,4 +168,46 @@ data class Payloads(
 data class CompositeFairing(
     val height: Dimensions? = null,
     val diameter: Dimensions? = null
+)
+
+
+fun RocketDto.toRocketDetailModel(): RocketDetailModel = RocketDetailModel(
+    name = name.orEmpty(),
+    description = description.orEmpty(),
+    height = height?.meters ?: -1.0,
+    diameter = diameter?.meters ?: -1.0,
+    mass = mass?.kg?.toInt() ?: -1,
+    firstStage = firstStage.toStageDetailModel(),
+    secondStage = secondStage.toStageDetailModel(),
+    images = flickrImages.orEmpty()
+)
+
+
+fun RocketDto.toRocketListItemModel(): RocketListItemModel = RocketListItemModel(
+    id = id.orEmpty(),
+    name = name.orEmpty(),
+    firstFlight = getFirstFlightDateFormat(firstFlight.orEmpty()),
+    height = height?.meters ?: -1.0,
+    diameter = diameter?.meters ?: -1.0,
+    mass = mass?.kg?.toInt() ?: -1
+)
+
+fun getFirstFlightDateFormat(date: String): String {
+    val formatter = DateTimeFormatter.ofPattern(datePattern)
+    return LocalDate.parse(date).format(formatter)
+}
+
+
+fun FirstStage.toStageDetailModel(): StageDetailModel = StageDetailModel(
+    reusable = reusable ?: false,
+    engines = engines?.toInt() ?: -1,
+    fuelAmountTons = fuelAmountTons ?: -1.0,
+    burnTimeSEC = burnTimeSEC?.toInt() ?: -1
+)
+
+fun SecondStage.toStageDetailModel(): StageDetailModel = StageDetailModel(
+    reusable = reusable ?: false,
+    engines = engines?.toInt() ?: -1,
+    fuelAmountTons = fuelAmountTons ?: -1.0,
+    burnTimeSEC = burnTimeSEC?.toInt() ?: -1
 )
